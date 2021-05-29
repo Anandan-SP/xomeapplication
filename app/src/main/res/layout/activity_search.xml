@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/activity_Search_LAY_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#D0D3D4"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/activity_Search_ET_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_edittext_corner"
+            android:hint="Search..."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_Search_RCYLV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activity_Search_LAY_edittext"
+        android:layout_marginLeft="9dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="9dp" />
+
+</RelativeLayout>
