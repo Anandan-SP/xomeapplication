@@ -10,17 +10,18 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getSupportActionBar()!!.hide()
-        setContentView(R.layout.activity_main)
-
+        setContentView(R.layout.activity_splash)
         navigateScreen()
     }
 
+    /**
+     * Navigate the screen from splash to Search Screen
+     */
     private fun navigateScreen() {
-
         Handler(Looper.getMainLooper()).postDelayed({
             val mainIntent = Intent(this@SplashActivity, SearchActivity::class.java)
             startActivity(mainIntent)
             finish()
-        }, 3000)
+        }, 2500)
     }
 }

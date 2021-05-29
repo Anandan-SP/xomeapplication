@@ -1,9 +1,7 @@
 package com.xomeapp
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +20,6 @@ class SearchActivity : AppCompatActivity() {
     var myRecyclerView: RecyclerView? = null
     var myFlickerPojoList: ArrayList<FlickerPojo> = ArrayList()
     var mySearchET: EditText? = null
-    var aSearchStr: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,29 +28,31 @@ class SearchActivity : AppCompatActivity() {
         classAndWidgetInitialize()
     }
 
+    /**
+     * Initialize the views and widgets
+     */
     private fun classAndWidgetInitialize() {
         myRecyclerView = findViewById(R.id.activity_Search_RCYLV)
         mySearchET = findViewById(R.id.activity_Search_ET_edittext)
-        textChangedListener()
+        onKeyboardSearchListener()
     }
 
-    private fun textChangedListener() {
-        mySearchET!!.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s!!.length >= 3) {
-                    getUsers(s.toString());
-                    aSearchStr = s.toString();
-                }
+    /**
+     * Keyboard search listener while clicks search
+     */
+    private fun onKeyboardSearchListener() {
+        mySearchET!!.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                getUsers(mySearchET!!.text.toString());
+                return@setOnEditorActionListener true
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
+            return@setOnEditorActionListener false
+        }
     }
 
+    /**
+     * Get the values depending upon the search strings
+     */
     private fun getUsers(aSearch: String) {
         val queue = Volley.newRequestQueue(this)
         val url: String =
@@ -64,12 +63,10 @@ class SearchActivity : AppCompatActivity() {
         val stringReq = StringRequest(
             Request.Method.GET, url,
             Response.Listener<String> { response ->
-
-                var strResp = response.toString()
-                Log.e("strResp", strResp)
-                val aParentObject: JSONObject = JSONObject(strResp)
-                val aPeopleObject: JSONObject = aParentObject.getJSONObject("photos")
-                val jsonArray: JSONArray = aPeopleObject.getJSONArray("photo")
+                var aResponseStr = response.toString()
+                val aParentObject: JSONObject = JSONObject(aResponseStr)
+                val aPhotoObject: JSONObject = aParentObject.getJSONObject("photos")
+                val jsonArray: JSONArray = aPhotoObject.getJSONArray("photo")
                 if (jsonArray.length() > 0) {
                     myFlickerPojoList.clear()
                     for (i in 0 until jsonArray.length()) {
@@ -93,20 +90,29 @@ class SearchActivity : AppCompatActivity() {
         queue.add(stringReq)
     }
 
+    /**
+     * Load the adapter
+     */
     private fun loadAdapter(aFlickerPojoList: ArrayList<FlickerPojo>) {
-
-        val imm = getSystemService(
-            INPUT_METHOD_SERVICE
-        ) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-
-        val gridLayoutManager = GridLayoutManager(this, 3)
-        myRecyclerView!!.layoutManager = gridLayoutManager
+        hideKeyboard()
+        val aGridLayoutManager = GridLayoutManager(this, 3)
+        myRecyclerView!!.layoutManager = aGridLayoutManager
+        myRecyclerView!!.setHasFixedSize(true)
         val aAdapter = FlickerGridAdapter(
             this@SearchActivity,
             aFlickerPojoList
         )
         myRecyclerView!!.adapter = aAdapter
+    }
+
+    /**
+     * Hide the keyboard after result shows
+     */
+    private fun hideKeyboard() {
+        val imm = getSystemService(
+            INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 
 }

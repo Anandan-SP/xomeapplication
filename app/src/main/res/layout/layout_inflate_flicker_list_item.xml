@@ -8,5 +8,6 @@
         android:id="@+id/layout_inflate_flicker_list_item_IMG_photo"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+       />
 </LinearLayout>
